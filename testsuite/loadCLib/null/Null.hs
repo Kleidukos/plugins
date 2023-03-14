@@ -1,9 +1,9 @@
-module Null ( resource )  where
+module Null (resource) where
 
 import API
 import Data.Dynamic
-import Prelude hiding (null)
 import Graphics.Rendering.OpenGL
+import Prelude hiding (null)
 
 resource = null
 

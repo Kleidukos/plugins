@@ -1,17 +1,18 @@
-
-import System.Plugins
 import API
+import System.Plugins
 
-src     = "../Plugin.hs"
-wrap    = "../Wrapper.hs"
+src = "../Plugin.hs"
+wrap = "../Wrapper.hs"
 apipath = "../api"
 
-main = do status <- make src ["-i"++apipath]
-          case status of
-                MakeSuccess _ _ -> f
-                MakeFailure e   -> error "there was a type error"
-
-  where f = do v <- pdynload "../Plugin.o" ["../api"] [] "API.Interface" "resource"
-               case v of
-                 LoadSuccess _ (a :: Interface) -> print $ field a -- will crash
-                 LoadFailure es  -> mapM_ putStrLn es
+main = do
+  status <- make src ["-i" ++ apipath]
+  case status of
+    MakeSuccess _ _ -> f
+    MakeFailure e -> error "there was a type error"
+  where
+    f = do
+      v <- pdynload "../Plugin.o" ["../api"] [] "API.Interface" "resource"
+      case v of
+        LoadSuccess _ (a :: Interface) -> print $ field a -- will crash
+        LoadFailure es -> mapM_ putStrLn es

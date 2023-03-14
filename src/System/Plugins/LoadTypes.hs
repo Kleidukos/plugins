@@ -19,35 +19,36 @@
 --
 
 module System.Plugins.LoadTypes
-    ( Key (..)
-    , Symbol
-    , Type
-    , Errors
-    , PackageConf
-    , Module (..)
-    , ObjType (..)
-    ) where
+  ( Key (..)
+  , Symbol
+  , Type
+  , Errors
+  , PackageConf
+  , Module (..)
+  , ObjType (..)
+  ) where
 
 import GHC.Unit.Module.ModIface
 
 data Key = Object String | Package String
 
-type Symbol      = String
-type Type        = String
-type Errors      = [String]
+type Symbol = String
+type Type = String
+type Errors = [String]
 type PackageConf = FilePath
 
-data Module = Module { path  :: !FilePath
-                     , mname :: !String
-                     , kind  :: !ObjType
-                     , iface :: ModIface    -- cache the iface
-                     , key   :: Key
-                     }
+data Module = Module
+  { path :: !FilePath
+  , mname :: !String
+  , kind :: !ObjType
+  , iface :: ModIface -- cache the iface
+  , key :: Key
+  }
 
 instance Ord Module where
-    compare m1 m2 = mname m1 `compare` mname m2
+  compare m1 m2 = mname m1 `compare` mname m2
 
 instance Eq Module where
-    m1 == m2 = mname m1 == mname m2
+  m1 == m2 = mname m1 == mname m2
 
-data ObjType = Vanilla | Shared deriving Eq
+data ObjType = Vanilla | Shared deriving (Eq)

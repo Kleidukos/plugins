@@ -1,5 +1,4 @@
-
-resource = plugin { 
-        function = map toUpper
-}
-
+resource =
+  plugin
+    { function = map toUpper
+    }

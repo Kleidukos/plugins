@@ -1,6 +1,6 @@
 module Null where
 
-import qualified Prelude
 import API
+import qualified Prelude
 
 resource = null

@@ -1,4 +1,4 @@
-module Dep ( resource )  where
+module Dep (resource) where
 
 import API
 import Data.Dynamic

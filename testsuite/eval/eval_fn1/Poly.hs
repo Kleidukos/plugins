@@ -1,4 +1,4 @@
-{-# OPTIONS -cpp -fglasgow-exts #-} 
+{-# OPTIONS -cpp -fglasgow-exts #-}
 module Poly where
 
 import Data.Typeable
@@ -8,7 +8,7 @@ data Fn = Fn {fn :: forall t. Eq t => t -> t -> Bool}
 --
 -- ignore type inside the Fn... is this correct?
 --
-instance Typeable Fn where
+instance Typeable Fn
 #if __GLASGOW_HASKELL__ >= 603
     typeOf _ = mkTyConApp (mkTyCon "Poly.Fn") []
 #else

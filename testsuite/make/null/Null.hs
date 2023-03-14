@@ -1,4 +1,4 @@
-module Null ( resource, resource_dyn )  where
+module Null (resource, resource_dyn) where
 
 import API
 import Data.Dynamic

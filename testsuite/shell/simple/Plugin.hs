@@ -1,5 +1,6 @@
 import Char
 
-resource = plugin { 
-        stringProcessor = map toUpper
-}
+resource =
+  plugin
+    { stringProcessor = map toUpper
+    }

@@ -17,8 +17,8 @@
 -- USA
 --
 
-module System.Eval (
-        module System.Eval.Haskell,
-   ) where
+module System.Eval
+  ( module System.Eval.Haskell
+  ) where
 
-import System.Eval.Haskell  {-all-}
+import System.Eval.Haskell {-all-}

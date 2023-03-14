@@ -83,7 +83,7 @@ import Foreign.C.String         ( CString, withCString, peekCString )
 import GHC (ModIface, ModIface_ (..), moduleName)
 import GHC.Ptr
 import GHC.Plugins (moduleNameString, defaultDynFlags, initDynFlags, GenWithIsBoot (..))
-import GHC.SysTools (initSysTools, lazyInitLlvmConfig)
+import GHC.SysTools (initSysTools)
 import GHC.Paths (libdir)
 import GHC.Driver.Main (newHscEnv)
 import GHC.Tc.Utils.Monad (initTcRnIf)
@@ -100,10 +100,9 @@ ifaceModuleName = moduleNameString . moduleName . mi_module
 
 readBinIface' :: FilePath -> IO ModIface
 readBinIface' hi_path = do
-    mySettings <- initSysTools (libdir) -- how should we really set the top dir?
-    llvmConfig <- lazyInitLlvmConfig (libdir)
-    dflags <- initDynFlags (defaultDynFlags mySettings llvmConfig)
-    e <- newHscEnv dflags
+    mySettings <- initSysTools libdir -- how should we really set the top dir?
+    dflags <- initDynFlags (defaultDynFlags mySettings)
+    e <- newHscEnv libdir dflags
     initTcRnIf 'r' e undefined undefined (readBinIface IgnoreHiWay QuietBinIFace hi_path)
 
 -- TODO need a loadPackage p package.conf :: IO () primitive

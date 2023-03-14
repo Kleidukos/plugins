@@ -4,5 +4,4 @@ import API
 
 import qualified B
 
-resource = Test { field = B.resource }
-
+resource = Test{field = B.resource}

@@ -1,6 +1,5 @@
-module Null ( resource )  where
+module Null (resource) where
 
 import API
 
-resource = plugin { a = 7 }
-
+resource = plugin{a = 7}

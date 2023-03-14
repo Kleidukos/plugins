@@ -9,4 +9,3 @@ v = 0xdeadbeef
 
 resource_dyn :: Dynamic
 resource_dyn = toDyn v
-

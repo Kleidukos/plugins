@@ -3,7 +3,7 @@
 -- LGPL version 2.1 or later (see http://www.gnu.org/copyleft/lesser.html)
 --
 
-module TestIO ( resource_dyn )  where
+module TestIO (resource_dyn) where
 
 import API
 import Data.Dynamic
@@ -11,30 +11,36 @@ import Data.Dynamic
 import Control.Exception (SomeException, catch)
 
 import System.IO
-import System.Posix.Types   ( ProcessID, Fd )
-import System.Posix.Process ( forkProcess, executeFile, getProcessID )
-import System.Posix.IO      ( createPipe, stdInput, 
-                              stdOutput, fdToHandle, closeFd, dupTo )
+import System.Posix.IO
+  ( closeFd
+  , createPipe
+  , dupTo
+  , fdToHandle
+  , stdInput
+  , stdOutput
+  )
+import System.Posix.Process (executeFile, forkProcess, getProcessID)
+import System.Posix.Types (Fd, ProcessID)
 
 resource_dyn :: Dynamic
 resource_dyn = toDyn resource
 
 resource :: TestIO
-resource = testio { field = date }
-
+resource = testio{field = date}
 
 --
 -- call a shell command , returning it's output
 --
 date :: IO String
-date = do (hdl,_,_) <- catch (popen "/bin/date") (\(_ :: SomeException)->error "popen failed")
-          hGetLine hdl 
+date = do
+  (hdl, _, _) <- catch (popen "/bin/date") (\(_ :: SomeException) -> error "popen failed")
+  hGetLine hdl
 
 ------------------------------------------------------------------------
 --
 -- my implementation of $val = `cmd`; (if this was perl)
 --
--- provide similar functionality to popen(3), 
+-- provide similar functionality to popen(3),
 -- along with bidirectional ipc via pipes
 -- return's the pid of the child process
 --
@@ -42,46 +48,47 @@ date = do (hdl,_,_) <- catch (popen "/bin/date") (\(_ :: SomeException)->error "
 -- unix-fork style function, and the modern function has semantics more
 -- like the Awkward-Squad paper. We provide implementations of popen
 -- using both versions, depending on which GHC the user wants to try.
--- 
+--
 
 popen :: FilePath -> IO (Handle, Handle, ProcessID)
 popen cmd = do
-        (pr, pw) <- createPipe
-        (cr, cw) <- createPipe    
+  (pr, pw) <- createPipe
+  (cr, cw) <- createPipe
 
-        -- parent --
-        let parent = do closeFd cw
-                        closeFd pr
-        -- child --
-        let child  = do closeFd pw
-                        closeFd cr 
-                        exec cmd (pr,cw)
-                        error "exec cmd failed!" -- typing only
+  -- parent --
+  let parent = do
+        closeFd cw
+        closeFd pr
+  -- child --
+  let child = do
+        closeFd pw
+        closeFd cr
+        exec cmd (pr, cw)
+        error "exec cmd failed!" -- typing only
 
--- if the parser front end understood cpp, this would work
--- #if __GLASGOW_HASKELL__ >= 601
-        pid <- forkProcess child -- fork child
-        parent                   -- and run parent code
--- #else
---          p   <- forkProcess
---          pid <- case p of
---                  Just pid -> parent >> return pid
---                  Nothing  -> child
--- #endif
+  -- if the parser front end understood cpp, this would work
+  -- #if __GLASGOW_HASKELL__ >= 601
+  pid <- forkProcess child -- fork child
+  parent -- and run parent code
+  -- #else
+  --          p   <- forkProcess
+  --          pid <- case p of
+  --                  Just pid -> parent >> return pid
+  --                  Nothing  -> child
+  -- #endif
+  hcr <- fdToHandle cr
+  hpw <- fdToHandle pw
 
-        hcr <- fdToHandle cr
-        hpw <- fdToHandle pw
-
-        return (hcr,hpw,pid)
+  return (hcr, hpw, pid)
 
 --
 -- execve cmd in the child process, dup'ing the file descriptors passed
 -- as arguments to become the child's stdin and stdout.
 --
-exec :: FilePath -> (Fd,Fd) -> IO ()
-exec cmd (pr,cw) = do
-        dupTo pr stdInput
-        dupTo cw stdOutput
-        executeFile cmd False [] Nothing
+exec :: FilePath -> (Fd, Fd) -> IO ()
+exec cmd (pr, cw) = do
+  dupTo pr stdInput
+  dupTo cw stdOutput
+  executeFile cmd False [] Nothing
 
 ------------------------------------------------------------------------

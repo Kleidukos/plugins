@@ -4,22 +4,23 @@
 --
 
 --
--- | Runplugs: use hs-plugins to run a Haskell expression under
+-- \| Runplugs: use hs-plugins to run a Haskell expression under
 -- controlled conditions.
---
-import System.Eval.Haskell             (unsafeEval)
+import System.Eval.Haskell (unsafeEval)
 
-import Data.Char                (chr)
-import Data.Maybe               (isJust, fromJust)
 import Control.Monad
+import Data.Char (chr)
+import Data.Maybe (fromJust, isJust)
 
+import System.Exit (ExitCode (ExitSuccess), exitWith)
+import System.IO (getContents, putStrLn)
+import System.Posix.Resource
+  ( Resource (ResourceCPUTime)
+  , ResourceLimit (ResourceLimit)
+  , ResourceLimits (ResourceLimits)
+  , setResourceLimit
+  )
 import System.Random
-import System.Exit              (exitWith, ExitCode(ExitSuccess))
-import System.IO                (getContents, putStrLn)
-import System.Posix.Resource    (setResourceLimit,
-			         Resource(ResourceCPUTime), 
-                                 ResourceLimits(ResourceLimits),
-			         ResourceLimit(ResourceLimit))
 
 import qualified Control.Exception (catch)
 
@@ -27,31 +28,54 @@ rlimit = ResourceLimit 3
 
 context = prehier ++ datas ++ qualifieds ++ controls
 
-prehier = ["Char", "List", "Maybe", "Numeric", "Random" ]
+prehier = ["Char", "List", "Maybe", "Numeric", "Random"]
 
-qualifieds = ["qualified Data.Map as M"
-             ,"qualified Data.Set as S"
-             ,"qualified Data.IntSet as I"]
+qualifieds =
+  [ "qualified Data.Map as M"
+  , "qualified Data.Set as S"
+  , "qualified Data.IntSet as I"
+  ]
 
-datas   = map ("Data." ++) [
-                "Bits", "Bool", "Char", "Dynamic", "Either", 
-                "Graph", "Int", "Ix", "List",
-                "Maybe", "Ratio", "Tree", "Tuple", "Typeable", "Word" 
-              ]
+datas =
+  map
+    ("Data." ++)
+    [ "Bits"
+    , "Bool"
+    , "Char"
+    , "Dynamic"
+    , "Either"
+    , "Graph"
+    , "Int"
+    , "Ix"
+    , "List"
+    , "Maybe"
+    , "Ratio"
+    , "Tree"
+    , "Tuple"
+    , "Typeable"
+    , "Word"
+    ]
 
 controls = map ("Control." ++) ["Monad", "Monad.Reader", "Monad.Fix", "Arrow"]
 
 main = do
-    setResourceLimit ResourceCPUTime (ResourceLimits rlimit rlimit)
-    s <- getLine
-    when (not . null $ s) $ do
-        x <- sequence (take 3 (repeat $ getStdRandom (randomR (97,122)) >>= return . chr))
-        s <- unsafeEval ("let { "++x++
-                         " = \n# 1 \"<irc>\"\n"++s++
-                         "\n} in take 2048 (show "++x++
-                         ")") context
-        when (isJust s) $ Control.Exception.catch 
-                    (putStrLn $ fromJust s)
-                    (\e -> putStrLn $ "Exception: " ++ show e )
-    exitWith ExitSuccess
-
+  setResourceLimit ResourceCPUTime (ResourceLimits rlimit rlimit)
+  s <- getLine
+  when (not . null $ s) $ do
+    x <- sequence (take 3 (repeat $ getStdRandom (randomR (97, 122)) >>= return . chr))
+    s <-
+      unsafeEval
+        ( "let { "
+            ++ x
+            ++ " = \n# 1 \"<irc>\"\n"
+            ++ s
+            ++ "\n} in take 2048 (show "
+            ++ x
+            ++ ")"
+        )
+        context
+    when (isJust s) $
+      Control.Exception.catch
+        (putStrLn $ fromJust s)
+        (\e -> putStrLn $ "Exception: " ++ show e)
+  exitWith ExitSuccess

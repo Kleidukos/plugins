@@ -2,11 +2,10 @@
 
 #include "../../../../config.h"
 
-import System.Plugins
 import API
+import System.Plugins
 
-main = do 
-    let includes = TOP ++ "/testsuite/load/null/api"
-    (_,v) <- load "../Null.o" ["."] ["../api/package.conf"] "resource"
-    putStrLn ( show (a v) )
-
+main = do
+  let includes = TOP ++ "/testsuite/load/null/api"
+  (_, v) <- load "../Null.o" ["."] ["../api/package.conf"] "resource"
+  putStrLn (show (a v))

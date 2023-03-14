@@ -88,14 +88,11 @@ import Data.List.Split
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Distribution.Package (packageId, getHSLibraryName, pkgName)
-import GHC.SysTools (initSysTools, lazyInitLlvmConfig)
+import GHC.SysTools (initSysTools)
+import GHC.CmmToLlvm.Config (initLlvmConfig)
 import GHC.Plugins (defaultDynFlags, initDynFlags, ways)
 import GHC.Platform.Ways (Way(..), hostIsDynamic)
 import qualified Data.List as List
-
-#if !MIN_VERSION_ghc(8,10,1)
-lazyInitLlvmConfig = initLlvmConfig
-#endif
 
 --
 -- and map Data.Map terms to FiniteMap terms
@@ -344,14 +341,10 @@ union ls ps' =
 grabDefaultPkgConf :: IO PkgEnvs
 grabDefaultPkgConf = do
         pc <- configureAllKnownPrograms silent defaultProgramDb
-#if MIN_VERSION_Cabal(1,24,0)
         (compiler, _platform, _programConfiguration)
            <- configure silent Nothing Nothing pc
         pkgIndex <- getInstalledPackages silent compiler
                         [GlobalPackageDB, UserPackageDB] pc
-#else
-        pkgIndex <- getInstalledPackages silent [GlobalPackageDB, UserPackageDB] pc
-#endif
         return $ [] `union` allPackages pkgIndex
 
 --
@@ -360,13 +353,9 @@ grabDefaultPkgConf = do
 readPackageConf :: FilePath -> IO [PackageConfig]
 readPackageConf f = do
     pc <- configureAllKnownPrograms silent defaultProgramDb
-#if MIN_VERSION_Cabal(1,24,0)
     (compiler, _platform, _programConfiguration)
        <- configure silent Nothing Nothing pc
     pkgIndex <- getInstalledPackages silent compiler [GlobalPackageDB, UserPackageDB, SpecificPackageDB f] pc
-#else
-    pkgIndex <- getInstalledPackages silent [GlobalPackageDB, UserPackageDB, SpecificPackageDB f] pc
-#endif
     return $ allPackages pkgIndex
 
 -- -----------------------------------------------------------
@@ -485,8 +474,7 @@ lookupPkg' p = withPkgEnvs env $ \fms -> go fms p
                 -- If we're loading dynamic libs we need the cbits to appear before the
                 -- real packages.
                 settings <- initSysTools (libdir)
-                llvmConfig <- lazyInitLlvmConfig (libdir)
-                dflags <- initDynFlags $ defaultDynFlags settings llvmConfig
+                dflags <- initDynFlags $ defaultDynFlags settings
                 libs <- mapM (findHSlib
                               (WayDyn `elem` ways dflags || hostIsDynamic)
                               libdirs)

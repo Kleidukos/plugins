@@ -4,15 +4,15 @@ module API where
 
 import Data.Typeable
 
-data Interface = Interface { 
-        equals :: forall t. Eq t => t -> t -> Bool
-     }
+data Interface = Interface
+  { equals :: forall t. Eq t => t -> t -> Bool
+  }
 
 --
 -- see how it hides the internal type.. but to compile GHC still checks
 -- the type.
 --
-instance Typeable Interface where
+instance Typeable Interface
 #if __GLASGOW_HASKELL__ >= 603
     typeOf i = mkTyConApp (mkTyCon "API.Interface") []
 #else
@@ -20,5 +20,4 @@ instance Typeable Interface where
 #endif
 
 plugin :: Interface
-plugin = Interface  { equals = (==) }
-
+plugin = Interface{equals = (==)}

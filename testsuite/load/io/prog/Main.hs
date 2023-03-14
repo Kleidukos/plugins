@@ -2,14 +2,14 @@
 
 #include "../../../../config.h"
 
-import System.Plugins
 import API
+import System.Plugins
 
 main :: IO ()
 main = do
-        m_v <- load "../TestIO.o" ["../api"] [] "resource"
-        v <- case m_v of
-                LoadFailure _   -> error "load failed"
-                LoadSuccess _ v -> return v
-        s <- field v
-        if null s then print False else print True
+  m_v <- load "../TestIO.o" ["../api"] [] "resource"
+  v <- case m_v of
+    LoadFailure _ -> error "load failed"
+    LoadSuccess _ v -> return v
+  s <- field v
+  if null s then print False else print True

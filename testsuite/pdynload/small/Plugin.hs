@@ -2,4 +2,4 @@ module Plugin where
 
 import API
 
-resource = plugin { function = "good" }
+resource = plugin{function = "good"}

@@ -3,7 +3,15 @@
 
 #
 # regress check. TODO check expected output
-# 
+#
+lint: ## Run the code linter (HLint)
+	@find testsuite src -name "*.hs" | xargs -P $(PROCS) -I {} hlint --refactor-options="-i" --refactor {}
+
+style: ## Run the code formatters (fourmolu, cabal-fmt)
+	@find testsuite src -name "*.hs" | xargs -P $(PROCS) -I {} fourmolu -q --mode inplace {}
+	@cabal-fmt -i plugins.cabal
+watch: ## Run ghcid
+	@ghcid -c "cabal repl"
 check:
 	@( d=/tmp/plugins.tmp.$$$$ ; mkdir $$d ; export TMPDIR=$$d ;\
 	   for i in `find testsuite ! -name CVS -type d -maxdepth 2 -mindepth 2 | sort` ; do \
@@ -42,3 +50,11 @@ clean:
 	rm -rf testsuite/plugs/plugs/runplugs
 	rm -rf $(EXTRA_CLEANS)
 
+help: ## Display this help message 
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.* ?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+PROCS := $(shell nproc)
+
+.PHONY: all $(MAKECMDGOALS)
+
+.DEFAULT_GOAL := help

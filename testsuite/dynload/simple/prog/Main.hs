@@ -2,14 +2,16 @@
 
 #include "../../../../config.h"
 
-import System.Plugins
 import API
+import System.Plugins
 
-main = do 
-        m_v <- dynload "../Plugin.o" ["../api"]
-                                     []
-                                     "resource_dyn"
-        case m_v of
-                LoadFailure _   -> error "didn't compile"
-                LoadSuccess _ v -> putStrLn $ (function v)
-
+main = do
+  m_v <-
+    dynload
+      "../Plugin.o"
+      ["../api"]
+      []
+      "resource_dyn"
+  case m_v of
+    LoadFailure _ -> error "didn't compile"
+    LoadSuccess _ v -> putStrLn $ (function v)

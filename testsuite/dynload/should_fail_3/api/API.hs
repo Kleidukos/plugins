@@ -5,11 +5,11 @@ module API where
 import Data.Typeable
 import GHC.Base
 
-data Interface = Interface { 
-        function :: String
-   }
+data Interface = Interface
+  { function :: String
+  }
 
-instance Typeable Interface where
+instance Typeable Interface
 #if __GLASGOW_HASKELL__ >= 603
     typeOf _ = mkTyConApp (mkTyCon "API.Interface") []
 #else
@@ -17,6 +17,6 @@ instance Typeable Interface where
 #endif
 
 plugin :: Interface
-plugin = Interface  { function = "goodbye" }
+plugin = Interface{function = "goodbye"}
 
 unsafeCoerce = unsafeCoerce#

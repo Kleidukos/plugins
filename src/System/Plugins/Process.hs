@@ -1,25 +1,26 @@
 {-# LANGUAGE CPP #-}
+
 --
+
 -- | A Posix.popen compatibility mapping.
 --
 -- If we use this, we should build -threaded
---
 module System.Plugins.Process (exec, popen) where
 
+import Control.Concurrent (forkIO)
 import System.Exit
 import System.IO
 import System.Process
-import Control.Concurrent       (forkIO)
 
 import qualified Control.Exception as E
 
 --
 -- slight wrapper over popen for calls that don't care about stdin to the program
 --
-exec :: String -> [String] -> IO ([String],[String],Bool)
+exec :: String -> [String] -> IO ([String], [String], Bool)
 exec f as = do
-        (a,b,c,_) <- popen f as (Just [])
-        return (lines a, lines b,c)
+  (a, b, c, _) <- popen f as (Just [])
+  return (lines a, lines b, c)
 
 type ProcessID = ProcessHandle
 
@@ -31,15 +32,14 @@ type ProcessID = ProcessHandle
 -- Posix.popen doesn't have this problem, so maybe we can reproduce its
 -- pipe handling somehow.
 --
-popen :: FilePath -> [String] -> Maybe String -> IO (String,String,Bool,ProcessID)
+popen :: FilePath -> [String] -> Maybe String -> IO (String, String, Bool, ProcessID)
 popen file args minput =
-    E.handle (\e -> return ([],show (e::E.IOException), False, error (show e))) $ do
-
-    (inp,out,err,pid) <- runInteractiveProcess file args Nothing Nothing
+  E.handle (\e -> return ([], show (e :: E.IOException), False, error (show e))) $ do
+    (inp, out, err, pid) <- runInteractiveProcess file args Nothing Nothing
 
     case minput of
-        Just input -> hPutStr inp input >> hClose inp -- importante!
-        Nothing    -> return ()
+      Just input -> hPutStr inp input >> hClose inp -- importante!
+      Nothing -> return ()
 
     -- Now, grab the input
     output <- hGetContents out
@@ -57,7 +57,8 @@ popen file args minput =
     exitCode <- waitForProcess pid -- blocks without -threaded, you're warned.
     case exitCode of
       ExitFailure code
-          | null errput -> let errMsg = file ++ ": failed with error code " ++ show code
-                           in return ([],errMsg,False,error errMsg)
-          | otherwise -> return ([],errput,False,error errput)
-      _ -> return (output,errput,True,pid)
+        | null errput ->
+            let errMsg = file ++ ": failed with error code " ++ show code
+             in return ([], errMsg, False, error errMsg)
+        | otherwise -> return ([], errput, False, error errput)
+      _ -> return (output, errput, True, pid)

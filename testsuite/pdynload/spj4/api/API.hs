@@ -1,5 +1,3 @@
-
 module API where
 
-newtype Interface = Interface { field :: Int }
-
+newtype Interface = Interface {field :: Int}

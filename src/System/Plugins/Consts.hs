@@ -1,5 +1,6 @@
-{-# OPTIONS_GHC -Wno-type-defaults#-}
 {-# LANGUAGE CPP #-}
+{-# OPTIONS_GHC -Wno-type-defaults #-}
+
 --
 -- Copyright (C) 2004 Don Stewart - http://www.cse.unsw.edu.au/~dons
 --
@@ -23,21 +24,20 @@ module System.Plugins.Consts where
 
 #include "config.h"
 
-import System.Directory          ( getTemporaryDirectory )
-import System.IO.Unsafe          ( unsafePerformIO )
-
+import System.Directory (getTemporaryDirectory)
+import System.IO.Unsafe (unsafePerformIO)
 
 -- | path to *build* dir, used by eval() for testing the examples
 top :: String
-top             = TOP
+top = TOP
 
 -- | what is ghc called?
 ghc :: String
-ghc             = WITH_GHC
+ghc = WITH_GHC
 
 -- | path to standard ghc libraries
 ghcLibraryPath :: String
-ghcLibraryPath  = GHC_LIB_PATH
+ghcLibraryPath = GHC_LIB_PATH
 
 -- | name of the system package.conf file
 sysPkgConf :: String
@@ -46,9 +46,10 @@ sysPkgConf = "package.conf"
 -- | This code is from runtime_loader:
 --   The extension used by system modules.
 sysPkgSuffix = ".a"
-objSuf       = ".o"
-hiSuf        = ".hi"
-hsSuf        = ".hs"
+
+objSuf = ".o"
+hiSuf = ".hi"
+hsSuf = ".hs"
 #if defined(CYGWIN) || defined(__MINGW32__)
 dllSuf       = ".dll"
 #else
@@ -58,7 +59,7 @@ dllSuf       = ".so"
 -- | The prefix used by system modules.  This, in conjunction with
 --  'systemModuleExtension', will result in a module filename that looks
 -- like \"HSconcurrent.o\"
-sysPkgPrefix      = "HS"
+sysPkgPrefix = "HS"
 
 -- | '_' on a.out, and Darwin
 #if LEADING_UNDERSCORE == 1

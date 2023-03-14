@@ -1,8 +1,8 @@
 module API where
 
-data Test = Test { 
-                field :: String 
-        }
+data Test = Test
+  { field :: String
+  }
 
 test :: Test
-test = Test { field = "default value" }
+test = Test{field = "default value"}

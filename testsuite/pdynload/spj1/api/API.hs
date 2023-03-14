@@ -1,4 +1,3 @@
-
 module API where
 
 -- data Interface = Interface { field :: Int }
@@ -6,4 +5,3 @@ module API where
 -- newtype Interface = Interface Int
 
 type Interface = Int
-

@@ -16,10 +16,9 @@ parseValue =
     value <- many1 letter
     char openQuote
     return value
-  <|>
-  do
-    value <- many1 letter
-    return value
+    <|> do
+      value <- many1 letter
+      return value
 
 parseString s = do
   case (parse parseKeyValue "" s) of
@@ -30,4 +29,3 @@ resource :: String -> IO String
 resource text = do
   parsedText <- mapM parseString (lines text)
   return (unlines parsedText)
-

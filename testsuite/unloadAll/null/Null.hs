@@ -1,9 +1,9 @@
-module Null ( resource )  where
+module Null (resource) where
 
 import API
 import Data.Dynamic
-import Prelude hiding (null)
 import qualified Dep
+import Prelude hiding (null)
 
 resource = Dep.resource
 

@@ -1,9 +1,8 @@
 module API where
 
-data Interface = Interface { 
-        valueOf :: String -> String 
-}
+data Interface = Interface
+  { valueOf :: String -> String
+  }
 
-plugin :: Interface 
-plugin = Interface { valueOf = id }
-
+plugin :: Interface
+plugin = Interface{valueOf = id}

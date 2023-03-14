@@ -4,6 +4,6 @@ import API
 
 resource = 0xBAD :: Int
 
--- resource = tiny { 
+-- resource = tiny {
 --     field = "hello strange world"
 -- }

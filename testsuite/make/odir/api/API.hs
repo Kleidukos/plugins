@@ -1,8 +1,8 @@
 module API where
 
-data Interface = Interface {
-       field :: String 
-}
+data Interface = Interface
+  { field :: String
+  }
 
 plugin :: Interface
-plugin = Interface { field = undefined }
+plugin = Interface{field = undefined}

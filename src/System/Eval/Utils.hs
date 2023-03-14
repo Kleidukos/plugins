@@ -21,34 +21,31 @@
 -- compile and run haskell strings at runtime.
 --
 
-module System.Eval.Utils (
+module System.Eval.Utils
+  ( Import
+  , symbol
+  , escape
+  , getPaths
+  , mkUniqueWith
+  , cleanup
+  , module Data.Maybe
+  , module Control.Monad
+  ) where
 
-        Import,
-        symbol,
-        escape,
-        getPaths,
-
-        mkUniqueWith,
-        cleanup,
-
-        module Data.Maybe,
-        module Control.Monad,
-
-    ) where
-
-import System.Plugins.Load                ( Symbol )
+import System.Plugins.Load (Symbol)
 import System.Plugins.Utils
 
-import System.IO
 import System.Directory
+import System.IO
 
 import Data.Char
 
 --
 -- we export these so that eval() users have a nice time
 --
-import Data.Maybe
+
 import Control.Monad
+import Data.Maybe
 
 --
 -- imports Foo's
@@ -69,24 +66,25 @@ escape s = concatMap (\c -> showLitChar c $ "") s
 --
 -- For Dynamic eval's, work out the compile and load command lines
 --
-getPaths :: IO ([String],[String])
+getPaths :: IO ([String], [String])
 getPaths = do
-        let make_line = ["-O0","-package","plugins"]
-        return (make_line,[])
+  let make_line = ["-O0", "-package", "plugins"]
+  return (make_line, [])
 
 -- ---------------------------------------------------------------------
 -- create the tmp file, and write source into it, using wrapper to
 -- create extra .hs src.
 --
-mkUniqueWith :: (String -> String -> [Import] -> String)
-             -> String
-             -> [Import] -> IO FilePath
-
+mkUniqueWith
+  :: (String -> String -> [Import] -> String)
+  -> String
+  -> [Import]
+  -> IO FilePath
 mkUniqueWith wrapper src mods = do
-        (tmpf,hdl) <- hMkUnique
-        let nm   = mkModid (basename tmpf)       -- used as a module name
-            src' = wrapper src nm mods
-        hPutStr hdl src' >> hFlush hdl >> hClose hdl >> return tmpf
+  (tmpf, hdl) <- hMkUnique
+  let nm = mkModid (basename tmpf) -- used as a module name
+      src' = wrapper src nm mods
+  hPutStr hdl src' >> hFlush hdl >> hClose hdl >> return tmpf
 
 --
 -- remove all the tmp files

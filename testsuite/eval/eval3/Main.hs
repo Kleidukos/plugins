@@ -10,29 +10,30 @@
 
 #include "../../../config.h"
 
-import System.Eval
 import Data.Dynamic
+import System.Eval
 
 main = do
-    a <- return $ toDyn (3::Integer)
+  a <- return $ toDyn (3 :: Integer)
 
-    -- so, we try to compile a function that takes a dyn.
-    -- looks like with GHC 6.4, we need to make sure the package.confs work:
-    m_b <- unsafeEval_ "\\dyn -> fromDyn dyn (7 :: Integer)"
-                ["Data.Dynamic"]
-                [ ]
-                [ ]
-                []
+  -- so, we try to compile a function that takes a dyn.
+  -- looks like with GHC 6.4, we need to make sure the package.confs work:
+  m_b <-
+    unsafeEval_
+      "\\dyn -> fromDyn dyn (7 :: Integer)"
+      ["Data.Dynamic"]
+      []
+      []
+      []
 
-    case m_b of 
-        Left s   -> mapM_ putStrLn s
-        Right b  -> putStrLn $ show (b a :: Integer) -- now apply it
-                
+  case m_b of
+    Left s -> mapM_ putStrLn s
+    Right b -> putStrLn $ show (b a :: Integer) -- now apply it
+
 {-
--- should work, but doesn't. type check fails 
+-- should work, but doesn't. type check fails
 -- (due to static vs dynamic typing issue)
 
      m_b <- unsafeEval_ "\\dyn -> fromMaybe (7 :: Int) (fromDynamic dyn)"
                                 ["Data.Dynamic","Data.Maybe"] [] []
 -}
-

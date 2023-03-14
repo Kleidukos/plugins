@@ -1,4 +1,5 @@
 module Main where
-import Load
-main = testload
 
+import Load
+
+main = testload

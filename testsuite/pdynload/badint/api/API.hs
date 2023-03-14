@@ -1,9 +1,8 @@
 module API where
 
-data Interface = Interface { 
-                transform :: String -> String
-     }
+data Interface = Interface
+  { transform :: String -> String
+  }
 
 rsrc :: Interface
-rsrc = Interface { transform = id }
-
+rsrc = Interface{transform = id}

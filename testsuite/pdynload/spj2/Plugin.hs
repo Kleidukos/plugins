@@ -4,8 +4,8 @@ module Plugin where
 -- and provides a polymorphic value
 
 import API
-resource :: Interface
 
+resource :: Interface
 --
 -- should pass type check, and dump core
 --

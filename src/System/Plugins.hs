@@ -17,20 +17,18 @@
 -- USA
 --
 
-module System.Plugins (
-
-        -- $Description
-
-        module System.Plugins.Make,
-        module System.Plugins.Load,
-
+module System.Plugins
+  ( -- $Description
+      module System.Plugins.Make
+  , module System.Plugins.Load
   ) where
 
-import System.Plugins.Make     {-all-}
-import System.Plugins.Load     {-all-}
+{-all-}
+import System.Plugins.Load {-all-}
+import System.Plugins.Make
 
 --
+
 -- $Description
 --
 -- [@NAME@] hs-plugins library : compile and load Haskell code at runtime
---

@@ -6,11 +6,9 @@ module API where
 
 import Modules.Flags as Flags
 
-data Interface = Interface {
-        dbFunc :: Flags.FlagRec -> Int
-}
-
+data Interface = Interface
+  { dbFunc :: Flags.FlagRec -> Int
+  }
 
 plugin :: Interface
-plugin = Interface { dbFunc = (\x -> 1) }
-
+plugin = Interface{dbFunc = (\x -> 1)}
